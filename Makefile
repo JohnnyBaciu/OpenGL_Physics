@@ -1,0 +1,4 @@
+INCLUDES = C:/users/11223/documents/cppsketchbook/dependencies/glad/glad.h C:/users/11223/documents/cppsketchbook/dependencies/shader/shader.h
+
+build:
+	g++ src/main.cpp  C:/users/11223/Documents/cppsketchbook/dependencies/glad/glad.c $(INCLUDES)  -IC:/users/11223/documents/cppsketchbook/dependencies C:/users/11223/documents/cppsketchbook/dependencies/GLFW/lib/libglfw3.a -lopengl32 -lgdi32 -o app
