@@ -1,3 +1,3 @@
-# OpenGl_Physics
+# OpenGL_Physics
 
 ### A project focused on creating physical simulations using OpenGl in C++
