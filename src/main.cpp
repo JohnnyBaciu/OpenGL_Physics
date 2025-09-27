@@ -13,114 +13,83 @@
 
 static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods);
 
+static void mouse_button_callback(GLFWwindow * window, int button, int action, int mods);
+
+static void cursor_position_callback(GLFWwindow * window, double xpos, double ypos);
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+void draw_sliders(unsigned int EBO, unsigned int VAO2, float sliderValue, unsigned int VAO);
 
 glm::vec3 floatToColor(float value);
 
 int width = 800;
 int length = 600;
 
+float slider[] = {
+	1.25f, 0.9f, 0.0f, 
+	1.25f, 0.85f, 0.0f,
+	-1.25f, 0.85f, 0.0f,
+	-1.25, 0.9f, 0.0f
+};
+
+int sliderIndices[] = {
+	0, 1, 3,
+	1, 2, 3
+};
+
 float center[] = {-1.27f, 0.0f, 0.0f, 
 		-1.14f, 0.0f, 0.0f, 
 		-1.0f, 0.0f, 0.0f,
-		-0.85f, 0.0f, 0.0f,
-		-0.72f, 0.0f, 0.0f,
-		-0.585f, 0.0f, 0.0f, 
-		-0.45f, 0.0f, 0.0f,
+			-0.72f, 0.0f, 0.0f,
+				-0.45f, 0.0f, 0.0f,
 		-0.32f, 0.0f, 0.0f, 
 		-0.19f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f,
-		1.27f, 0.0f, 0.0f,
-		1.14f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		0.85f, 0.0f, 0.0f,
-		0.72f, 0.0f, 0.0f,
-		0.585f, 0.0f, 0.0f,
-		0.45f, 0.0f, 0.0f,
+			1.14f, 0.0f, 0.0f,
+				0.72f, 0.0f, 0.0f,
+			0.45f, 0.0f, 0.0f,
 		0.32f, 0.0f, 0.0f,
 		0.19f, 0.0f, 0.0f,
-		0.065, 0.0f, 0.0f,
 		-1.27f, 0.5f, 0.0f, 
 		-1.14f, 0.5f, 0.0f, 
 		-1.0f, 0.5f, 0.0f,
-		-0.85f, 0.5f, 0.0f,
-		-0.72f, 0.5f, 0.0f,
-		-0.585f, 0.5f, 0.0f, 
-		-0.45f, 0.5f, 0.0f,
-		-0.32f, 0.5f, 0.0f, 
-		-0.19f, 0.5f, 0.0f,
-		0.0f, 0.5f, 0.0f,
-		1.27f, 0.5f, 0.0f,
-		1.14f, 0.5f, 0.0f,
-		1.0f, 0.5f, 0.0f,
-		0.85f, 0.5f, 0.0f,
-		0.72f, 0.5f, 0.0f,
-		0.585f, 0.5f, 0.0f,
-		0.45f, 0.5f, 0.0f,
-		0.32f, 0.5f, 0.0f,
-		0.19f, 0.5f, 0.0f,
+				-0.72f, 0.5f, 0.0f,
+			-0.45f, 0.5f, 0.0f,
+			-0.19f, 0.5f, 0.0f,
+								0.72f, 0.5f, 0.0f,
+							0.19f, 0.5f, 0.0f,
 		0.065, 0.5f, 0.0f,
-		-1.14f, 0.7f, 0.0f, 
-		-1.0f, 0.7f, 0.0f,
-		-0.85f, 0.7f, 0.0f,
-		-0.72f, 0.7f, 0.0f,
-		-0.585f, 0.7f, 0.0f, 
-		-0.45f, 0.7f, 0.0f,
+		
+							-0.45f, 0.7f, 0.0f,
 		-0.32f, 0.7f, 0.0f, 
-		-0.19f, 0.7f, 0.0f,
-		0.0f, 0.7f, 0.0f,
-		1.27f, 0.7f, 0.0f,
-		1.14f, 0.7f, 0.0f,
-		1.0f, 0.7f, 0.0f,
-		0.85f, 0.7f, 0.0f,
-		0.72f, 0.7f, 0.0f,
-		0.585f, 0.7f, 0.0f,
-		0.45f, 0.7f, 0.0f,
+			0.0f, 0.7f, 0.0f,
+			1.14f, 0.7f, 0.0f,
+				0.72f, 0.7f, 0.0f,
+			0.45f, 0.7f, 0.0f,
 		0.32f, 0.7f, 0.0f,
 		0.19f, 0.7f, 0.0f,
-		0.065, 0.7f, 0.0f,
-
-
+	
 		-1.27f, -0.5f, 0.0f, 
-		-1.14f, -0.5f, 0.0f, 
-		-1.0f, -0.5f, 0.0f,
-		-0.85f, -0.5f, 0.0f,
-		-0.72f, -0.5f, 0.0f,
-		-0.585f, -0.5f, 0.0f, 
-		-0.45f, -0.5f, 0.0f,
-		-0.32f, -0.5f, 0.0f, 
-		-0.19f, -0.5f, 0.0f,
-		0.0f, -0.5f, 0.0f,
-		1.27f, -0.5f, 0.0f,
-		1.14f, -0.5f, 0.0f,
-		1.0f, -0.5f, 0.0f,
-		0.85f, -0.5f, 0.0f,
-		0.72f, -0.5f, 0.0f,
-		0.585f, -0.5f, 0.0f,
-		0.45f, -0.5f, 0.0f,
-		0.32f, -0.5f, 0.0f,
-		0.19f, -0.5f, 0.0f,
-		0.065, -0.5f, 0.0f,
-		-1.14f, -0.7f, 0.0f, 
+				-1.0f, -0.5f, 0.0f,
+					-0.45f, -0.5f, 0.0f,
+					0.0f, -0.5f, 0.0f,
+									0.32f, -0.5f, 0.0f,
+
+	
 		-1.0f, -0.7f, 0.0f,
-		-0.85f, -0.7f, 0.0f,
-		-0.72f, -0.7f, 0.0f,
-		-0.585f, -0.7f, 0.0f, 
+			
 		-0.45f, -0.7f, 0.0f,
 		-0.32f, -0.7f, 0.0f, 
 		-0.19f, -0.7f, 0.0f,
 		0.0f, -0.7f, 0.0f,
-		1.27f, -0.7f, 0.0f,
-		1.14f, -0.7f, 0.0f,
-		1.0f, -0.7f, 0.0f,
-		0.85f, -0.7f, 0.0f,
-		0.72f, -0.7f, 0.0f,
-		0.585f, -0.7f, 0.0f,
-		0.45f, -0.7f, 0.0f,
-		0.32f, -0.7f, 0.0f,
-		0.19f, -0.7f, 0.0f,
-		0.065, -0.7f, 0.0f
 
+		1.14f, -0.7f, 0.0f,
+		
+		0.72f, -0.7f, 0.0f,
+			0.45f, -0.7f, 0.0f,
+	
+	
 
 		};
 
@@ -133,8 +102,14 @@ glm::vec3 position[numCircles];
 
 
 
-
+float gravity;
 Shader* globalShader;
+float sliderValue = 0.0f;       // initial slider value (0.0 -> 1.0)
+bool draggingSlider = false;     // true when mouse is dragging the slider
+float sliderMinX = slider[6];       // left end in world coordinates
+float sliderMaxX = slider[3];       // right end in world coordinates
+float sliderY = slider[1] - std::abs((slider[4]-slider[1]) / 2);         // slider bar y position
+									 //
 std::vector<float> myVector;
 
 int main() {
@@ -163,6 +138,10 @@ int main() {
 	glfwMakeContextCurrent(window);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	glViewport(0,0, width, length);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetCursorPosCallback(window, cursor_position_callback);
 
 
 
@@ -177,12 +156,29 @@ myVector.push_back(0.0f);  // center z
 
 for(int j = 0; j <= steps; j++){ // <= steps ensures closure
     float angle = 2.0f * 3.14159265f * ((float)j / (float)steps);
-    float x = sin(angle) * radius;
-    float y = cos(angle) * radius;
+    float x = sin(angle);
+    float y = cos(angle);
     myVector.push_back(x);
     myVector.push_back(y);
     myVector.push_back(0.0f);
 }
+
+
+
+	unsigned int VAO2;
+	glGenVertexArrays(1, &VAO2);
+	glBindVertexArray(VAO2);
+	unsigned int VBO2;
+	glGenBuffers(1, &VBO2);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(slider), slider, GL_STATIC_DRAW);
+	glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void *) 0);
+	glEnableVertexAttribArray(0);
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sliderIndices), sliderIndices, GL_STATIC_DRAW);
+	glBindVertexArray(0);
 
 
 	unsigned int VAO;
@@ -199,6 +195,9 @@ for(int j = 0; j <= steps; j++){ // <= steps ensures closure
 	shader.use();
 	glm::mat4 projection = glm::ortho(-((float)width/(float)length), ((float)width/(float)length), -1.0f, 1.0f, -1.0f, 1.0f );
 	shader.setMat4("projection", projection);
+	shader.setFloat("radius", radius);
+	glBindVertexArray(0);
+
 
 
 
@@ -211,7 +210,7 @@ for(int j = 0; j <= steps; j++){ // <= steps ensures closure
 		float currentTime = (float)glfwGetTime();
 		float deltaTime = currentTime - lastTime;
 		accumulator += deltaTime;
-		lastTime = glfwGetTime();
+		lastTime = currentTime;
 
 		if(accumulator >= frameTime){
 
@@ -219,17 +218,19 @@ for(int j = 0; j <= steps; j++){ // <= steps ensures closure
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		shader.use();
+		glBindVertexArray(VAO);
 	       	glm::mat4 view = glm::mat4(1.0f);	
 		shader.setMat4("view", view);
-		glBindVertexArray(VAO);
+		shader.setFloat("radius", radius);
 		float aspect = ((float)width/(float)length);
 		glm::mat4 model = glm::mat4(1.0f); 
 		
 
 
 		for(int i = 0; i < numCircles; i++){
-			position[i] += velocity[i];
+			position[i] += velocity[i]*frameTime;
 		}
+
 
 
 		for(int i = 0; i < numCircles; i++){
@@ -237,13 +238,13 @@ for(int j = 0; j <= steps; j++){ // <= steps ensures closure
 			if(position[i].x < -aspect+radius){ velocity[i].x *= -0.99f; position[i].x = -aspect+radius;}
 			if(position[i].x > aspect-radius){ velocity[i].x *= -0.99f; position[i].x = aspect-radius;}
 			if(position[i].y > 1-radius){ velocity[i].y *= -0.99f; position[i].y = 1-radius;}
-		}
+						}
 
 
 		for(int i = 0; i < numCircles; i++){
-		/*gravity on/off*/	deltaVelo[i].y = 0.15f * frameTime;
+			deltaVelo[i].y = gravity * frameTime;
 			velocity[i] -= deltaVelo[i];	
-		}
+						}
 
 
 		for(int i = 0; i < numCircles; i++){
@@ -267,17 +268,14 @@ for(int j = 0; j <= steps; j++){ // <= steps ensures closure
 
 
 
-				glm::vec3 finalVelocity1 = tangent1 + nVelocity2 * 0.9f;
-				glm::vec3 finalVelocity2 = tangent2 + nVelocity1 * 0.9f;
+				glm::vec3 finalVelocity1 = tangent1 + nVelocity2 * 0.91f;
+				glm::vec3 finalVelocity2 = tangent2 + nVelocity1 * 0.91f;
 
 				velocity[i] = finalVelocity1;
 				velocity[j] = finalVelocity2;
+					}		
+				}
 
-
-
-
-			}
-		}
 
 
 		for(int i = 0; i < numCircles; i++){
@@ -286,10 +284,14 @@ for(int j = 0; j <= steps; j++){ // <= steps ensures closure
 
 			shader.setMat4("model", model);
 			shader.setVec3("color", floatToColor(center[(i+1)*3-3]));
-	
 
 			glDrawArrays(GL_TRIANGLE_FAN, 0, myVector.size()/3);
 		}
+
+
+		draw_sliders(EBO, VAO2, sliderValue, VAO);
+
+
 
 		
 		glfwSwapBuffers(window);
@@ -297,9 +299,7 @@ for(int j = 0; j <= steps; j++){ // <= steps ensures closure
 
 	}
 	glfwPollEvents();
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	
+	glBindVertexArray(0);
 
 	}
 
@@ -310,6 +310,9 @@ for(int j = 0; j <= steps; j++){ // <= steps ensures closure
 
 	return 0;
 }
+
+
+
 
 
 static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
@@ -324,17 +327,17 @@ static void key_callback(GLFWwindow * window, int key, int scancode, int action,
 			position[i] = glm::vec3(center[(i+1)*3-3], center[(i+1)*3-2], center[(i+1)*3-1]);
 		}
 	
-		velocity[0].x = -0.001f;
-		velocity[0].y = 0.0f;
-		velocity[1].y = 0.0f;
-		velocity[4] = glm::vec3(0.0f, 0.0f, 0.0f);
-
-
+		velocity[0].x = -0.3f;
+		velocity[0].y = 0.9f;
+		velocity[1].y = 0.08f;
+		velocity[4] = glm::vec3(0.5f, 0.2f, 0.0f);
 	}
 	
 	std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
-	
 }
+
+
+
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -349,6 +352,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 
+
+
+
 glm::vec3 floatToColor(float value) {
     // Map float to an integer seed
     unsigned int seed = static_cast<unsigned int>((value + 1.27f) * 10000); 
@@ -358,4 +364,84 @@ glm::vec3 floatToColor(float value) {
 	
 
     return glm::vec3(dist(rng), 0.4f, 0.5f);
+}
+
+
+
+
+void draw_sliders(unsigned int EBO, unsigned int VAO2, float sliderValue, unsigned int VAO) {
+    globalShader->use();
+
+    // Draw the slider bar
+    globalShader->setMat4("model", glm::mat4(1.0f));
+    globalShader->setVec3("color", glm::vec3(1.0f, 1.0f, 1.0f));
+    globalShader->setFloat("radius", 1.0f);
+    glBindVertexArray(VAO2);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    // Draw the dragger circle
+    glm::mat4 model = glm::mat4(1.0f);
+
+    float sliderY = slider[1] - std::abs((slider[4]-slider[1]) / 2);
+
+    model = glm::translate(model, glm::vec3(sliderValue, sliderY, 0.0f));
+    globalShader->setMat4("model", model);
+    globalShader->setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f)); // red dragger
+    globalShader->setFloat("radius", 0.03f);
+
+    // Bind the VAO of your circle (assume it's called VAO_circle)
+    glBindVertexArray(VAO);  
+    glDrawArrays(GL_TRIANGLE_FAN, 0, myVector.size()/3);
+
+    gravity = sliderValue*4;
+}
+
+
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+	//std::cout << "mouse pressed" << std::endl;
+    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        if (action == GLFW_PRESS) {
+            double mouseX, mouseY;
+            glfwGetCursorPos(window, &mouseX, &mouseY);
+
+            // Convert mouseX to NDC / world coordinates
+            int width, height;
+            glfwGetWindowSize(window, &width, &height);
+            float ndcX = ((float)mouseX - (width / 2.0f)) * (2.0f / height);
+	    //std::cout << "ndcx at: " << ndcX << std::endl;
+
+            // Check if click is close to the slider bar
+            if (std::abs(ndcX - sliderValue) < 0.05f) {
+                draggingSlider = true; // start dragging
+		//std::cout << "button pressed" << std::endl;
+
+            }
+        } else if (action == GLFW_RELEASE) {
+            draggingSlider = false; // stop dragging
+		//std::cout << "mouse released" << std::endl;
+        }
+    }
+}
+
+
+
+
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (!draggingSlider) return;
+
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+
+    // Map mouse x to world coordinates
+   float ndcX = ((float)xpos - (width / 2.0f)) * (2.0f / height);
+
+    //std::cout << "dragging ndcx: " << ndcX << std::endl;
+
+    // Clamp to slider range
+    if (ndcX < sliderMinX) ndcX = sliderMinX;
+    if (ndcX > sliderMaxX) ndcX = sliderMaxX;
+
+    // Convert to 0.0 -> 1.0 slider value
+    sliderValue = ndcX;
 }
