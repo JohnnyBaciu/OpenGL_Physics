@@ -12,7 +12,8 @@ The goal in mind with this project is to create a series of physical simulations
 
 <br/><br/>
 The whole project is made for Windows but feel free to try for linux or mac. Efforts will be made to clean up Makefile to work for all platforms.   
-
+<br/>
+Thanks to <a href=https://learnopengl.com/Getting-started/>LearnOpenGL</a> for inspiring making of shader.h used in this repo
 
 <hr/>
 
